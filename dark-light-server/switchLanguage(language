@@ -1,0 +1,1 @@
+          <button onClick={() = === 'fa' ? 'en' : 'fa')} style={{ background: 'none', border: 'none', color: colors.text, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>

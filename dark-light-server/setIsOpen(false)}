@@ -1,0 +1,1 @@
+              <button onClick={() = style={{ background: 'none', border: 'none', color: colors.text, cursor: 'pointer' }}><X size={20} /></button>
