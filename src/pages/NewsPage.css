@@ -1,0 +1,26 @@
+/* NewsPage.css */
+
+.news-page {
+  padding: 6rem 2rem;
+}
+
+.news-page__header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.news-page__title {
+  font-size: 3rem;
+}
+
+.news-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+@media (max-width: 576px) {
+  .news-page__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,15 @@
+/* Layout.css */
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+.layout__main {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  margin-top: 80px;
+}
