@@ -229,7 +229,7 @@ const AppContent = () => {
                 color: colors.accent,
               }}
             >
-              irts98.ir
+              dayts.ir
             </div>
           </div>
         </motion.div>
