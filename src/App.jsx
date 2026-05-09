@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
-import { useLanguage } from "./hooks/useLanguage";
+import { LanguageProvider, useLanguageContext } from "./context/LanguageContext";
 import Navbar from "./components/Navbar";
 import BackgroundAnimation from "./components/BackgroundAnimation";
 import NotificationBar from "./components/NotificationBar";
@@ -9,7 +9,7 @@ import "./styles/globals.css";
 
 const AppContent = () => {
   const { isDarkMode, colors } = useTheme();
-  const { t } = useLanguage();
+const { t } = useLanguageContext();
 
   return (
     <div
@@ -345,7 +345,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <ThemeProvider>
-      <AppContent />
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
     </ThemeProvider>
   );
 };

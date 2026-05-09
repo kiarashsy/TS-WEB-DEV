@@ -1,11 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
-import { useLanguage } from '../hooks/useLanguage';
+import { useLanguageContext } from "../context/LanguageContext";
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme, colors } = useTheme();
-  const { language, switchLanguage, t } = useLanguage();
+  const { language, toggleLanguage, t } = useLanguageContext();
 
   return (
     <motion.nav 
@@ -61,7 +61,7 @@ const Navbar = () => {
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => switchLanguage(language === 'fa' ? 'en' : 'fa')}
+          onClick={toggleLanguage}
           style={{ 
             background: colors.accent,
             border: 'none',
