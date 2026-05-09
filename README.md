@@ -16,3 +16,16 @@
 [![License](https://img.shields.io/badge/License-All_Rights_Reserved-red?style=for-the-badge)](LICENSE)
 
 <br/>
+## 🎙️ Join Our TeamSpeak
+
+<div align="center">
+
+[![TeamSpeak](https://img.shields.io/badge/TeamSpeak-Join%20Server-2580C3?style=for-the-badge&logo=teamspeak&logoColor=white)](ts3server://dayts.ir?port=9987)
+
+### [🔊 Click to Join DarkLight TeamSpeak](ts3server://dayts.ir?port=9987)
+
+| Info | Value |
+|------|-------|
+| **Address** | `dayts.ir` |
+
+</div>
