@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
-import { LanguageProvider, useLanguageContext } from "./context/LanguageContext";
+import {
+  LanguageProvider,
+  useLanguageContext,
+} from "./context/LanguageContext";
 import Navbar from "./components/Navbar";
 import BackgroundAnimation from "./components/BackgroundAnimation";
 import NotificationBar from "./components/NotificationBar";
+import NotificationModal from "./components/NotificationModal";
 import "./styles/globals.css";
 
 const AppContent = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { isDarkMode, colors } = useTheme();
-const { t } = useLanguageContext();
+  const { t } = useLanguageContext();
 
   return (
     <div
@@ -20,9 +25,8 @@ const { t } = useLanguageContext();
       }}
     >
       <BackgroundAnimation />
-      <Navbar />
-      <NotificationBar />
-
+      <Navbar onOpenNewsModal={() => setIsModalOpen(true)} />
+      <NotificationBar onOpenModal={() => setIsModalOpen(true)} />
       {/* Hero Section */}
       <div
         style={{
@@ -90,14 +94,13 @@ const { t } = useLanguageContext();
             justifyContent: "center",
           }}
         >
-          {/* دکمه اتصال به TeamSpeak */}
           <motion.button
             whileHover={{
               scale: 1.05,
               boxShadow: `0 10px 30px ${colors.accent}50`,
             }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => window.open('ts3server://irts98.ir', '_blank')}
+            onClick={() => window.open("ts3server://dayts.ir", "_blank")}
             style={{
               padding: "15px 35px",
               background: `linear-gradient(135deg, ${colors.accent}, ${isDarkMode ? "#1565c0" : "#1976d2"})`,
@@ -111,15 +114,16 @@ const { t } = useLanguageContext();
               boxShadow: `0 5px 15px ${colors.accent}30`,
             }}
           >
-            🎙️ اتصال به سرور
+            🎙️ {t("hero.joinButton")}
           </motion.button>
 
-          {/* دکمه بیشتر بدانید */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
-              document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+              document
+                .getElementById("features")
+                .scrollIntoView({ behavior: "smooth" });
             }}
             style={{
               padding: "15px 35px",
@@ -137,7 +141,6 @@ const { t } = useLanguageContext();
           </motion.button>
         </motion.div>
 
-        {/* Status Box */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -177,12 +180,7 @@ const { t } = useLanguageContext();
             </div>
           </div>
 
-          <div
-            style={{
-              width: "1px",
-              background: colors.border,
-            }}
-          />
+          <div style={{ width: "1px", background: colors.border }} />
 
           <div style={{ textAlign: "center" }}>
             <div
@@ -205,12 +203,7 @@ const { t } = useLanguageContext();
             </div>
           </div>
 
-          <div
-            style={{
-              width: "1px",
-              background: colors.border,
-            }}
-          />
+          <div style={{ width: "1px", background: colors.border }} />
 
           <div style={{ textAlign: "center" }}>
             <div
@@ -220,7 +213,7 @@ const { t } = useLanguageContext();
                 marginBottom: "5px",
               }}
             >
-              🎙️ آدرس سرور
+              🎙️ Server
             </div>
             <div
               style={{
@@ -238,11 +231,7 @@ const { t } = useLanguageContext();
       {/* Features Section */}
       <div
         id="features"
-        style={{
-          padding: "80px 20px",
-          maxWidth: "1200px",
-          margin: "0 auto",
-        }}
+        style={{ padding: "80px 20px", maxWidth: "1200px", margin: "0 auto" }}
       >
         <motion.h2
           initial={{ opacity: 0 }}
@@ -338,6 +327,12 @@ const { t } = useLanguageContext();
         <p style={{ marginBottom: "5px" }}>{t("footer.text")}</p>
         <p style={{ fontSize: "0.9rem" }}>{t("footer.rights")}</p>
       </footer>
+
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

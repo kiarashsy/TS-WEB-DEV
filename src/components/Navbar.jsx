@@ -3,9 +3,16 @@ import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguageContext } from "../context/LanguageContext";
 
-const Navbar = () => {
+const Navbar = ({ onOpenNewsModal }) => {
   const { isDarkMode, toggleTheme, colors } = useTheme();
   const { language, toggleLanguage, t } = useLanguageContext();
+
+  const handleNavClick = (item, e) => {
+    if (item === 'news') {
+      e.preventDefault();
+      onOpenNewsModal();
+    }
+  };
 
   return (
     <motion.nav 
@@ -30,6 +37,7 @@ const Navbar = () => {
         direction: 'rtl'
       }}
     >
+      {/* Logo */}
       <motion.div 
         whileHover={{ scale: 1.05 }}
         style={{ fontSize: '1.8rem', fontWeight: 'bold' }}
@@ -38,18 +46,21 @@ const Navbar = () => {
         <span style={{ color: colors.accent }}>Light</span>
       </motion.div>
 
+      {/* Navigation Links */}
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
         {['home', 'features', 'news', 'team'].map((item) => (
           <motion.a 
             key={item}
-            href={`#${item === 'home' ? '' : item}`}
+            href={item === 'news' ? '#' : `#${item === 'home' ? '' : item}`}
+            onClick={(e) => handleNavClick(item, e)}
             whileHover={{ y: -2, color: colors.accent }}
             style={{ 
               color: colors.text, 
               textDecoration: 'none', 
               fontWeight: 500,
               transition: 'color 0.3s ease',
-              fontSize: '0.95rem'
+              fontSize: '0.95rem',
+              cursor: 'pointer'
             }}
           >
             {t(`nav.${item}`)}
@@ -57,7 +68,9 @@ const Navbar = () => {
         ))}
       </div>
 
+      {/* Action Buttons */}
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        {/* Language Toggle */}
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -77,6 +90,7 @@ const Navbar = () => {
           {language === 'fa' ? '🇬🇧 EN' : '🇮🇷 FA'}
         </motion.button>
 
+        {/* Theme Toggle */}
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
