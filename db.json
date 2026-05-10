@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "root",
+      "password": "darklight2024",
+      "role": "root",
+      "name": "Super Admin"
+    }
+  ],
+
+  "stats": {
+    "onlineUsers": 124,
+    "totalChannels": 42,
+    "serverPing": "23ms",
+    "totalNews": 5,
+    "totalUsers": 3
+  },
+  "$schema": "./node_modules/json-server/schema.json"
+}

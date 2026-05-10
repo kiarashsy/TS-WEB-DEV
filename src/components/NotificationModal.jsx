@@ -2,53 +2,20 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguageContext } from '../context/LanguageContext';
+import { useNews } from '../context/NewsContext';
 
 const NotificationModal = ({ isOpen, onClose }) => {
   const { colors, isDarkMode } = useTheme();
   const { t, language } = useLanguageContext();
+  const { news } = useNews();
 
-  const notifications = [
-    {
-      id: 1,
-      icon: '🆕',
-      title: t('notif.updateTitle'),
-      message: t('notif.updateMsg'),
-      time: language === 'fa' ? '۲ ساعت پیش' : '2 hours ago',
-      color: '#4CAF50',
-    },
-    {
-      id: 2,
-      icon: '🎉',
-      title: t('notif.eventTitle'),
-      message: t('notif.eventMsg'),
-      time: language === 'fa' ? '۵ ساعت پیش' : '5 hours ago',
-      color: '#FF9800',
-    },
-    {
-      id: 3,
-      icon: '📋',
-      title: t('notif.ruleTitle'),
-      message: t('notif.ruleMsg'),
-      time: language === 'fa' ? '۱ روز پیش' : '1 day ago',
-      color: '#2196F3',
-    },
-    {
-      id: 4,
-      icon: '🎮',
-      title: language === 'fa' ? 'تورنمنت هفتگی' : 'Weekly Tournament',
-      message: language === 'fa' ? 'ثبت‌نام تورنمنت این هفته شروع شد!' : 'Weekly tournament registration started!',
-      time: language === 'fa' ? '۲ روز پیش' : '2 days ago',
-      color: '#9C27B0',
-    },
-    {
-      id: 5,
-      icon: '⭐',
-      title: language === 'fa' ? 'عضو ویژه هفته' : 'Member of the Week',
-      message: language === 'fa' ? 'تبریک به عضو برتر این هفته! 🎉' : 'Congrats to this week\'s top member! 🎉',
-      time: language === 'fa' ? '۳ روز پیش' : '3 days ago',
-      color: '#FFD700',
-    },
-  ];
+  const categoryIcons = {
+    general: '📋', tournament: '🏆', update: '🔄', event: '🎉', team: '👥',
+  };
+
+  const categoryColors = {
+    general: '#2196F3', tournament: '#FF9800', update: '#4CAF50', event: '#9C27B0', team: '#E91E63',
+  };
 
   return (
     <AnimatePresence>
@@ -60,18 +27,10 @@ const NotificationModal = ({ isOpen, onClose }) => {
           transition={{ duration: 0.15 }}
           onClick={onClose}
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.7)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 2000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px',
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+            zIndex: 2000, display: 'flex', alignItems: 'center',
+            justifyContent: 'center', padding: '20px',
           }}
         >
           <motion.div
@@ -83,34 +42,20 @@ const NotificationModal = ({ isOpen, onClose }) => {
             style={{
               background: colors.primary,
               border: `1px solid ${colors.border}`,
-              borderRadius: '20px',
-              padding: '25px',
-              maxWidth: '550px',
-              width: '100%',
-              maxHeight: '80vh',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
+              borderRadius: '20px', padding: '25px',
+              maxWidth: '550px', width: '100%', maxHeight: '80vh',
+              overflow: 'hidden', display: 'flex', flexDirection: 'column',
               boxShadow: `0 20px 60px ${isDarkMode ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.2)'}`,
               direction: language === 'fa' ? 'rtl' : 'ltr',
-              textAlign: language === 'fa' ? 'right' : 'left',
             }}
           >
             {/* Header */}
             <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px',
-              paddingBottom: '12px',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              marginBottom: '20px', paddingBottom: '12px',
               borderBottom: `1px solid ${colors.border}`,
             }}>
-              <h2 style={{ 
-                color: colors.text, 
-                fontSize: '1.3rem', 
-                fontWeight: 700, 
-                margin: 0,
-              }}>
+              <h2 style={{ color: colors.text, fontSize: '1.3rem', fontWeight: 700, margin: 0 }}>
                 🔔 {t('notif.title')}
               </h2>
               <motion.button
@@ -118,125 +63,88 @@ const NotificationModal = ({ isOpen, onClose }) => {
                 whileTap={{ scale: 0.95 }}
                 onClick={onClose}
                 style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: colors.textSecondary,
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '1.2rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.15s ease',
-                }}
-              >
+                  background: 'transparent', border: 'none', color: colors.textSecondary,
+                  width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer',
+                  fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
                 ✕
               </motion.button>
             </div>
 
-            {/* Notifications List */}
-            <div style={{ 
-              overflowY: 'auto', 
-              flex: 1,
-              paddingRight: language === 'fa' ? '5px' : '0',
-              paddingLeft: language === 'fa' ? '0' : '5px',
-            }}>
-              {notifications.map((notif, index) => (
-                <motion.div
-                  key={notif.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05, duration: 0.2 }}
-                  whileHover={{ 
-                    scale: 1.01,
-                    borderColor: `${notif.color}60`,
-                  }}
-                  style={{
-                    background: colors.card,
-                    border: `1px solid ${colors.border}`,
-                    borderRadius: '14px',
-                    padding: '16px',
-                    marginBottom: '10px',
-                    transition: 'all 0.15s ease',
-                    cursor: 'default',
-                  }}
-                >
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                    <div style={{
-                      background: `${notif.color}20`,
-                      width: '42px',
-                      height: '42px',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.2rem',
-                      flexShrink: 0,
-                    }}>
-                      {notif.icon}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ 
-                        display: 'flex', 
-                        justifyContent: 'space-between', 
-                        alignItems: 'flex-start',
-                        marginBottom: '4px',
-                        gap: '10px',
-                      }}>
-                        <h4 style={{ 
-                          color: colors.text, 
-                          fontSize: '0.95rem', 
-                          fontWeight: 600, 
-                          margin: 0,
-                          wordBreak: 'break-word',
+            {/* News List */}
+            <div style={{ overflowY: 'auto', flex: 1, paddingRight: language === 'fa' ? '5px' : '0' }}>
+              {news.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: colors.textSecondary }}>
+                  <span style={{ fontSize: '3rem' }}>📭</span>
+                  <p>{language === 'fa' ? 'خبری موجود نیست' : 'No news available'}</p>
+                </div>
+              ) : (
+                news.map((item, index) => {
+                  const catColor = categoryColors[item.category] || '#2196F3';
+                  const catIcon = categoryIcons[item.category] || '📋';
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05, duration: 0.2 }}
+                      whileHover={{ scale: 1.01, borderColor: `${catColor}60` }}
+                      style={{
+                        background: colors.card, border: `1px solid ${colors.border}`,
+                        borderRadius: '14px', padding: '16px', marginBottom: '10px',
+                        transition: 'all 0.15s ease', cursor: 'default',
+                      }}
+                    >
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                        <div style={{
+                          background: `${catColor}20`, width: '42px', height: '42px',
+                          borderRadius: '12px', display: 'flex', alignItems: 'center',
+                          justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0,
                         }}>
-                          {notif.title}
-                        </h4>
-                        <span style={{ 
-                          fontSize: '0.7rem', 
-                          color: colors.textSecondary, 
-                          whiteSpace: 'nowrap',
-                          marginTop: '2px',
-                        }}>
-                          {notif.time}
-                        </span>
+                          {catIcon}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{
+                            display: 'flex', justifyContent: 'space-between',
+                            alignItems: 'flex-start', marginBottom: '4px', gap: '10px',
+                          }}>
+                            <h4 style={{
+                              color: colors.text, fontSize: '0.95rem', fontWeight: 600,
+                              margin: 0, wordBreak: 'break-word',
+                            }}>
+                              {language === 'fa' ? item.title : (item.titleEn || item.title)}
+                            </h4>
+                            <span style={{
+                              fontSize: '0.7rem', color: colors.textSecondary,
+                              whiteSpace: 'nowrap', marginTop: '2px',
+                            }}>
+                              📅 {item.date}
+                            </span>
+                          </div>
+                          <p style={{
+                            color: colors.textSecondary, fontSize: '0.85rem',
+                            margin: 0, lineHeight: 1.5, wordBreak: 'break-word',
+                          }}>
+                            {language === 'fa' ? item.content : (item.contentEn || item.content)}
+                          </p>
+                        </div>
                       </div>
-                      <p style={{ 
-                        color: colors.textSecondary, 
-                        fontSize: '0.85rem', 
-                        margin: 0, 
-                        lineHeight: 1.5,
-                        wordBreak: 'break-word',
-                      }}>
-                        {notif.message}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                    </motion.div>
+                  );
+                })
+              )}
             </div>
 
             {/* Close Button */}
             <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
               onClick={onClose}
               style={{
-                background: colors.accent,
-                border: 'none',
-                color: '#fff',
-                padding: '12px',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                marginTop: '18px',
-                width: '100%',
-                transition: 'all 0.15s ease',
-              }}
-            >
+                background: colors.accent, border: 'none', color: '#fff',
+                padding: '12px', borderRadius: '12px', cursor: 'pointer',
+                fontSize: '0.95rem', fontWeight: 600, marginTop: '18px',
+                width: '100%', transition: 'all 0.15s ease',
+              }}>
               {language === 'fa' ? 'بستن' : 'Close'}
             </motion.button>
           </motion.div>

@@ -5,17 +5,32 @@ import {
   LanguageProvider,
   useLanguageContext,
 } from "./context/LanguageContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { NewsProvider } from "./context/NewsContext";
 import Navbar from "./components/Navbar";
 import BackgroundAnimation from "./components/BackgroundAnimation";
 import NotificationBar from "./components/NotificationBar";
 import NotificationModal from "./components/NotificationModal";
+import Login from "./pages/admin/Login";
+import Dashboard from "./pages/admin/Dashboard";
 import "./styles/globals.css";
 
 const AppContent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
   const { isDarkMode, colors } = useTheme();
   const { t } = useLanguageContext();
+  const { currentUser } = useAuth();
 
+  // اگر می‌خواهد پنل ادمین ببیند
+  if (showAdmin) {
+    if (currentUser) {
+      return <Dashboard onBack={() => setShowAdmin(false)} />;
+    }
+    return <Login />;
+  }
+  
+  // صفحه اصلی سایت
   return (
     <div
       style={{
@@ -24,10 +39,16 @@ const AppContent = () => {
         transition: "color 0.3s ease, background 0.3s ease",
       }}
     >
+      {/* پس‌زمینه متحرک */}
       <BackgroundAnimation />
+      
+      {/* نوبار با دکمه اخبار */}
       <Navbar onOpenNewsModal={() => setIsModalOpen(true)} />
+      
+      {/* نوار اعلان بالا */}
       <NotificationBar onOpenModal={() => setIsModalOpen(true)} />
-      {/* Hero Section */}
+
+      {/* بخش Hero */}
       <div
         style={{
           paddingTop: "120px",
@@ -40,6 +61,7 @@ const AppContent = () => {
           direction: "rtl",
         }}
       >
+        {/* تایتل اصلی */}
         <motion.h1
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -55,6 +77,7 @@ const AppContent = () => {
           🎮 {t("hero.title")}
         </motion.h1>
 
+        {/* زیرعنوان */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -69,6 +92,7 @@ const AppContent = () => {
           {t("hero.subtitle")}
         </motion.p>
 
+        {/* توضیحات */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -83,6 +107,7 @@ const AppContent = () => {
           {t("hero.description")}
         </motion.p>
 
+        {/* دکمه‌های Hero */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -94,6 +119,7 @@ const AppContent = () => {
             justifyContent: "center",
           }}
         >
+          {/* دکمه اتصال به TeamSpeak */}
           <motion.button
             whileHover={{
               scale: 1.05,
@@ -117,6 +143,7 @@ const AppContent = () => {
             🎙️ {t("hero.joinButton")}
           </motion.button>
 
+          {/* دکمه بیشتر بدانید */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -141,6 +168,7 @@ const AppContent = () => {
           </motion.button>
         </motion.div>
 
+        {/* Status Box */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -159,6 +187,7 @@ const AppContent = () => {
             backdropFilter: "blur(20px)",
           }}
         >
+          {/* تم فعلی */}
           <div style={{ textAlign: "center" }}>
             <div
               style={{
@@ -182,6 +211,7 @@ const AppContent = () => {
 
           <div style={{ width: "1px", background: colors.border }} />
 
+          {/* زبان فعلی */}
           <div style={{ textAlign: "center" }}>
             <div
               style={{
@@ -205,6 +235,7 @@ const AppContent = () => {
 
           <div style={{ width: "1px", background: colors.border }} />
 
+          {/* آدرس سرور */}
           <div style={{ textAlign: "center" }}>
             <div
               style={{
@@ -231,8 +262,13 @@ const AppContent = () => {
       {/* Features Section */}
       <div
         id="features"
-        style={{ padding: "80px 20px", maxWidth: "1200px", margin: "0 auto" }}
+        style={{
+          padding: "80px 20px",
+          maxWidth: "1200px",
+          margin: "0 auto",
+        }}
       >
+        {/* تایتل بخش Features */}
         <motion.h2
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -247,6 +283,7 @@ const AppContent = () => {
           {t("features.title")}
         </motion.h2>
 
+        {/* گرید کارت‌های Features */}
         <div
           style={{
             display: "grid",
@@ -282,6 +319,7 @@ const AppContent = () => {
                 cursor: "default",
               }}
             >
+              {/* آیکون */}
               <div style={{ fontSize: "3rem", marginBottom: "20px" }}>
                 {feature === "voiceChat" && "🎙️"}
                 {feature === "customBots" && "🤖"}
@@ -290,6 +328,7 @@ const AppContent = () => {
                 {feature === "competitions" && "🏆"}
                 {feature === "customRoles" && "👑"}
               </div>
+              {/* عنوان کارت */}
               <h3
                 style={{
                   color: colors.accent,
@@ -300,6 +339,7 @@ const AppContent = () => {
               >
                 {t(`features.${feature}`)}
               </h3>
+              {/* توضیحات کارت */}
               <p
                 style={{
                   color: colors.textSecondary,
@@ -326,9 +366,27 @@ const AppContent = () => {
       >
         <p style={{ marginBottom: "5px" }}>{t("footer.text")}</p>
         <p style={{ fontSize: "0.9rem" }}>{t("footer.rights")}</p>
+        
+        {/* دکمه مخفی ورود به پنل ادمین */}
+        <p
+          onClick={() => setShowAdmin(true)}
+          style={{
+            cursor: "pointer",
+            opacity: 0.3,
+            fontSize: "0.7rem",
+            marginTop: "10px",
+            userSelect: "none",
+            transition: "opacity 0.3s ease",
+          }}
+          onMouseEnter={(e) => (e.target.style.opacity = "1")}
+          onMouseLeave={(e) => (e.target.style.opacity = "0.3")}
+          title="Admin Panel"
+        >
+          🔑 Admin Panel
+        </p>
       </footer>
 
-      {/* Notification Modal */}
+      {/* مودال اعلان‌ها */}
       <NotificationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -337,11 +395,16 @@ const AppContent = () => {
   );
 };
 
+// فقط یک App داشته باشیم
 const App = () => {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <AppContent />
+        <AuthProvider>
+          <NewsProvider>
+            <AppContent />
+          </NewsProvider>
+        </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
