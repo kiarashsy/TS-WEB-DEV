@@ -6,15 +6,12 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [currentUser, setCurrentUser] = useState(() => {
-    
-    return null;
-    });
-    const [users, setUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [users, setUsers] = useState([]);
 
   // لود کاربر از localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('dl-current-user');
+    const saved = sessionStorage.getItem('dl-current-user');
     if (saved) setCurrentUser(JSON.parse(saved));
   }, []);
 
@@ -27,11 +24,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     const allUsers = await api.getUsers();
-    const user = allUsers.find(u => u.username === username && u.password === password);
+    const user = allUsers.find(u => u.username.trim() === username.trim() && u.password === password);
     
     if (user) {
       setCurrentUser(user);
-      localStorage.setItem('dl-current-user', JSON.stringify(user));
+      sessionStorage.setItem('dl-current-user', JSON.stringify(user));
       return { success: true, user };
     }
     return { success: false, message: 'نام کاربری یا رمز عبور اشتباه است' };
@@ -39,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('dl-current-user');
+    sessionStorage.removeItem('dl-current-user');
   };
 
   const addUser = async (newUser) => {

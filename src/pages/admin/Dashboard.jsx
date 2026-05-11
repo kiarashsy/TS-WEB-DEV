@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -6,11 +6,28 @@ import { useLanguageContext } from '../../context/LanguageContext';
 import BackgroundAnimation from '../../components/BackgroundAnimation';
 import RootPanel from './RootPanel';
 import NewsManager from './NewsManager';
+import { useNews } from '../../context/NewsContext';
+import { api } from '../../services/api';
 
 const Dashboard = ({ onBack }) => {
   const { currentUser, logout } = useAuth();
   const { isDarkMode, colors } = useTheme();
   const { t, language } = useLanguageContext();
+  const { news } = useNews();
+  const [usersCount, setUsersCount] = useState(0);
+
+  useEffect(() => {
+    loadUsersCount();
+  }, []);
+
+  const loadUsersCount = async () => {
+    try {
+      const users = await api.getUsers();
+      setUsersCount(users.length);
+    } catch (error) {
+      setUsersCount(0);
+    }
+  };
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh' }}>
@@ -43,15 +60,6 @@ const Dashboard = ({ onBack }) => {
               <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                 onClick={() => { logout(); onBack(); }}
                 style={{
-                  padding: '12px 20px', background: colors.accent,
-                  border: 'none', borderRadius: '12px', color: '#fff',
-                  cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem', fontFamily: 'inherit',
-                }}>
-                🏠 {language === 'fa' ? 'سایت اصلی' : 'Main Site'}
-              </motion.button>
-              <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                onClick={() => { logout(); onBack(); }}
-                style={{
                   padding: '12px 25px', background: 'rgba(255,68,68,0.15)',
                   border: '1px solid rgba(255,68,68,0.3)', borderRadius: '12px',
                   color: '#ff4444', cursor: 'pointer', fontWeight: 600,
@@ -69,9 +77,9 @@ const Dashboard = ({ onBack }) => {
               gap: '15px', marginBottom: '25px',
             }}>
             {[
-              { label: language === 'fa' ? 'آنلاین' : 'Online', value: '۱۲۴', icon: '🟢', color: '#4CAF50' },
-              { label: language === 'fa' ? 'اخبار' : 'News', value: '۸', icon: '📰', color: '#2196F3' },
-              { label: language === 'fa' ? 'کاربران' : 'Users', value: '۳', icon: '👥', color: '#FF9800' },
+              { label: language === 'fa' ? 'اخبار' : 'News', value: news.length, icon: '📰', color: '#2196F3' },
+              { label: language === 'fa' ? 'کاربران' : 'Users', value: usersCount, icon: '👥', color: '#FF9800' },
+              { label: language === 'fa' ? 'سرور' : 'Server', value: '🟢', icon: '🖥️', color: '#4CAF50' },
               { label: language === 'fa' ? 'پینگ' : 'Ping', value: '۲۳ms', icon: '📡', color: '#9C27B0' },
             ].map((stat, i) => (
               <div key={i} style={{
@@ -89,10 +97,10 @@ const Dashboard = ({ onBack }) => {
           {/* Root Panel - فقط برای Super Admin */}
           {currentUser?.role === 'root' && <RootPanel />}
           
-          {/* فاصله بین RootPanel و NewsManager */}
+          {/* فاصله */}
           {currentUser?.role === 'root' && <div style={{ height: '25px' }} />}
 
-          {/* News Manager - همه ادمین‌ها می‌تونن ببینن */}
+          {/* News Manager - همه ادمین‌ها */}
           <NewsManager />
 
         </div>

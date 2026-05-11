@@ -14,18 +14,25 @@ const Login = () => {
   const { isDarkMode, colors } = useTheme();
   const { t, language } = useLanguageContext();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    setTimeout(() => {
-      const result = login(username, password);
+    // حذف اسپیس‌های اضافی
+    const cleanUsername = username.trim();
+    const cleanPassword = password.trim();
+
+    try {
+      const result = await login(cleanUsername, cleanPassword);
       if (!result.success) {
         setError(result.message);
       }
-      setLoading(false);
-    }, 500);
+    } catch (err) {
+      setError(language === 'fa' ? 'خطا در اتصال به سرور' : 'Connection error');
+    }
+    
+    setLoading(false);
   };
 
   return (
@@ -194,34 +201,6 @@ const Login = () => {
               {loading ? '⏳' : language === 'fa' ? 'ورود به پنل' : 'Login'}
             </motion.button>
           </form>
-
-          {/* Default Credentials */}
-          <div style={{
-            marginTop: '20px',
-            padding: '15px',
-            background: colors.primary,
-            borderRadius: '12px',
-            border: `1px solid ${colors.border}`,
-          }}>
-            <p style={{
-              color: colors.textSecondary,
-              fontSize: '0.75rem',
-              textAlign: 'center',
-              margin: '0 0 5px 0',
-            }}>
-              {language === 'fa' ? 'اطلاعات پیش‌فرض:' : 'Default credentials:'}
-            </p>
-            <p style={{
-              color: colors.accent,
-              fontSize: '0.8rem',
-              textAlign: 'center',
-              margin: 0,
-              fontFamily: 'monospace',
-              direction: 'ltr',
-            }}>
-              root / darklight2024
-            </p>
-          </div>
         </motion.div>
       </div>
     </div>
