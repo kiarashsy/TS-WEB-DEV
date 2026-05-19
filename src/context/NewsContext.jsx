@@ -11,42 +11,42 @@ export const useNews = () => {
 export const NewsProvider = ({ children }) => {
   const [news, setNews] = useState([]);
 
-  const loadNews = async () => {
-    try {
-      const res = await fetch('/api/news?_sort=id&_order=desc');
-      const data = await res.json();
-      if (Array.isArray(data)) setNews(data);
-    } catch (e) {
-      console.error('Failed to load news:', e);
-    }
+  const loadNews = () => {
+    fetch('/api/news?_sort=id&_order=desc')
+      .then(res => res.json())
+      .then(data => setNews(data))
+      .catch(() => {});
   };
 
   useEffect(() => {
     loadNews();
   }, []);
 
-  const addNews = async (newsItem) => {
+  const addNews = (newsItem) => {
     const newItem = { ...newsItem, date: new Date().toISOString().split('T')[0], published: true };
-    await fetch('/api/news', {
+    fetch('/api/news', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newItem),
-    });
-    await loadNews();
+    })
+    .then(() => loadNews())
+    .catch(() => {});
   };
 
-  const updateNews = async (id, updatedItem) => {
-    await fetch(`/api/news/${id}`, {
+  const updateNews = (id, updatedItem) => {
+    fetch(`/api/news/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedItem),
-    });
-    await loadNews();
+    })
+    .then(() => loadNews())
+    .catch(() => {});
   };
 
-  const deleteNews = async (id) => {
-    await fetch(`/api/news/${id}`, { method: 'DELETE' });
-    await loadNews();
+  const deleteNews = (id) => {
+    fetch(`/api/news/${id}`, { method: 'DELETE' })
+      .then(() => loadNews())
+      .catch(() => {});
   };
 
   return (
