@@ -11,8 +11,7 @@ export const useNews = () => {
 export const NewsProvider = ({ children }) => {
   const [news, setNews] = useState([]);
 
-  // لود از API
-  useEffect(() => {
+  const loadNews = () => {
     fetch('/api/news?_sort=id&_order=desc')
       .then(res => res.json())
       .then(data => {
@@ -21,6 +20,10 @@ export const NewsProvider = ({ children }) => {
         }
       })
       .catch(() => {});
+  };
+
+  useEffect(() => {
+    loadNews();
   }, []);
 
   const addNews = (newsItem) => {
@@ -31,13 +34,8 @@ export const NewsProvider = ({ children }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newItem),
     })
-    .then(res => res.json())
-    .then(savedItem => {
-      setNews(prev => [savedItem, ...prev]);
-    })
-    .catch(() => {
-      setNews(prev => [{ ...newItem, id: Date.now() }, ...prev]);
-    });
+    .then(() => loadNews())
+    .catch(() => loadNews());
   };
 
   const updateNews = (id, updatedItem) => {
@@ -46,18 +44,14 @@ export const NewsProvider = ({ children }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedItem),
     })
-    .then(() => {
-      setNews(prev => prev.map(item => item.id === id ? { ...item, ...updatedItem } : item));
-    })
-    .catch(() => {});
+    .then(() => loadNews())
+    .catch(() => loadNews());
   };
 
   const deleteNews = (id) => {
     fetch(`/api/news/${id}`, { method: 'DELETE' })
-      .then(() => {
-        setNews(prev => prev.filter(item => item.id !== id));
-      })
-      .catch(() => {});
+      .then(() => loadNews())
+      .catch(() => loadNews());
   };
 
   return (
