@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguageContext } from '../../context/LanguageContext';
 import { useNews } from '../../context/NewsContext';
-import { translateText } from '../../services/api';
 
 const NewsManager = () => {
   const { news, addNews, updateNews, deleteNews } = useNews();
@@ -31,7 +30,7 @@ const NewsManager = () => {
     setShowForm(false);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     
     if (!title || !content) {
@@ -41,35 +40,11 @@ const NewsManager = () => {
       return;
     }
 
-    setMessage(isFa ? '⏳ در حال ترجمه خودکار...' : '⏳ Auto-translating...');
-    setMessageType('info');
-
-    let finalTitle = title;
-    let finalTitleEn = titleEn;
-    let finalContent = content;
-    let finalContentEn = contentEn;
-
-    try {
-      if (isFa) {
-        // فارسی → انگلیسی
-        if (!titleEn) finalTitleEn = await translateText(title, 'fa', 'en');
-        if (!contentEn) finalContentEn = await translateText(content, 'fa', 'en');
-      } else {
-        // انگلیسی → فارسی
-        finalTitle = await translateText(title, 'en', 'fa');
-        finalContent = await translateText(content, 'en', 'fa');
-        finalTitleEn = title;
-        finalContentEn = content;
-      }
-    } catch (err) {
-      console.log('Translation failed, using original text');
-    }
-
     const newsData = { 
-      title: finalTitle,
-      titleEn: finalTitleEn || finalTitle,
-      content: finalContent,
-      contentEn: finalContentEn || finalContent,
+      title, 
+      titleEn: titleEn || title, 
+      content, 
+      contentEn: contentEn || content, 
       category 
     };
 
@@ -178,7 +153,7 @@ const NewsManager = () => {
                   placeholder={isFa ? 'عنوان فارسی *' : 'Persian Title *'}
                   style={{ padding: '12px 16px', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', color: colors.text, fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit' }} />
                 <input type="text" value={titleEn} onChange={(e) => setTitleEn(e.target.value)}
-                  placeholder={isFa ? 'عنوان انگلیسی (خودکار ترجمه می‌شود)' : 'English Title (auto-translated)'}
+                  placeholder={isFa ? 'عنوان انگلیسی' : 'English Title'}
                   style={{ padding: '12px 16px', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', color: colors.text, fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
@@ -186,7 +161,7 @@ const NewsManager = () => {
                   placeholder={isFa ? 'متن فارسی *' : 'Persian Content *'} rows="3"
                   style={{ padding: '12px 16px', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', color: colors.text, fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit', resize: 'vertical' }} />
                 <textarea value={contentEn} onChange={(e) => setContentEn(e.target.value)}
-                  placeholder={isFa ? 'متن انگلیسی (خودکار ترجمه می‌شود)' : 'English Content (auto-translated)'} rows="3"
+                  placeholder={isFa ? 'متن انگلیسی' : 'English Content'} rows="3"
                   style={{ padding: '12px 16px', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', color: colors.text, fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit', resize: 'vertical' }} />
               </div>
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
