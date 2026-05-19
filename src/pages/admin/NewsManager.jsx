@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguageContext } from '../../context/LanguageContext';
 import { useNews } from '../../context/NewsContext';
+import { translateText } from '../../services/api';
 
 const NewsManager = () => {
   const { news, addNews, updateNews, deleteNews } = useNews();
@@ -18,6 +19,7 @@ const NewsManager = () => {
   
   const { colors } = useTheme();
   const { language } = useLanguageContext();
+  const isFa = language === 'fa';
 
   const resetForm = () => {
     setTitle('');
@@ -29,24 +31,54 @@ const NewsManager = () => {
     setShowForm(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!title || !content) {
-      setMessage(language === 'fa' ? 'عنوان و محتوا الزامی است' : 'Title and content are required');
+      setMessage(isFa ? 'عنوان و محتوا الزامی است' : 'Title and content are required');
       setMessageType('error');
       setTimeout(() => setMessage(''), 3000);
       return;
     }
 
-    const newsData = { title, titleEn: titleEn || title, content, contentEn: contentEn || content, category };
+    setMessage(isFa ? '⏳ در حال ترجمه خودکار...' : '⏳ Auto-translating...');
+    setMessageType('info');
+
+    let finalTitle = title;
+    let finalTitleEn = titleEn;
+    let finalContent = content;
+    let finalContentEn = contentEn;
+
+    try {
+      if (isFa) {
+        // فارسی → انگلیسی
+        if (!titleEn) finalTitleEn = await translateText(title, 'fa', 'en');
+        if (!contentEn) finalContentEn = await translateText(content, 'fa', 'en');
+      } else {
+        // انگلیسی → فارسی
+        finalTitle = await translateText(title, 'en', 'fa');
+        finalContent = await translateText(content, 'en', 'fa');
+        finalTitleEn = title;
+        finalContentEn = content;
+      }
+    } catch (err) {
+      console.log('Translation failed, using original text');
+    }
+
+    const newsData = { 
+      title: finalTitle,
+      titleEn: finalTitleEn || finalTitle,
+      content: finalContent,
+      contentEn: finalContentEn || finalContent,
+      category 
+    };
 
     if (editingId) {
       updateNews(editingId, newsData);
-      setMessage(language === 'fa' ? 'خبر بروزرسانی شد' : 'News updated');
+      setMessage(isFa ? '✅ خبر بروزرسانی شد' : '✅ News updated');
     } else {
       addNews(newsData);
-      setMessage(language === 'fa' ? 'خبر منتشر شد' : 'News published');
+      setMessage(isFa ? '✅ خبر منتشر شد' : '✅ News published');
     }
     
     setMessageType('success');
@@ -66,17 +98,17 @@ const NewsManager = () => {
 
   const handleDelete = (id) => {
     deleteNews(id);
-    setMessage(language === 'fa' ? 'خبر حذف شد' : 'News deleted');
+    setMessage(isFa ? 'خبر حذف شد' : 'News deleted');
     setMessageType('success');
     setTimeout(() => setMessage(''), 3000);
   };
 
   const categories = [
-    { value: 'general', label: language === 'fa' ? 'عمومی' : 'General', icon: '📋', color: '#2196F3' },
-    { value: 'tournament', label: language === 'fa' ? 'تورنمنت' : 'Tournament', icon: '🏆', color: '#FF9800' },
-    { value: 'update', label: language === 'fa' ? 'بروزرسانی' : 'Update', icon: '🔄', color: '#4CAF50' },
-    { value: 'event', label: language === 'fa' ? 'رویداد' : 'Event', icon: '🎉', color: '#9C27B0' },
-    { value: 'team', label: language === 'fa' ? 'تیم' : 'Team', icon: '👥', color: '#E91E63' },
+    { value: 'general', label: isFa ? 'عمومی' : 'General', icon: '📋', color: '#2196F3' },
+    { value: 'tournament', label: isFa ? 'تورنمنت' : 'Tournament', icon: '🏆', color: '#FF9800' },
+    { value: 'update', label: isFa ? 'بروزرسانی' : 'Update', icon: '🔄', color: '#4CAF50' },
+    { value: 'event', label: isFa ? 'رویداد' : 'Event', icon: '🎉', color: '#9C27B0' },
+    { value: 'team', label: isFa ? 'تیم' : 'Team', icon: '👥', color: '#E91E63' },
   ];
 
   return (
@@ -95,7 +127,7 @@ const NewsManager = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ fontSize: '1.8rem' }}>📰</span>
           <h3 style={{ color: colors.text, margin: 0, fontSize: '1.3rem', fontWeight: 700 }}>
-            {language === 'fa' ? 'مدیریت اخبار' : 'News Manager'}
+            {isFa ? 'مدیریت اخبار' : 'News Manager'}
           </h3>
           <span style={{ color: colors.textSecondary, fontSize: '0.85rem' }}>({news.length})</span>
         </div>
@@ -110,7 +142,7 @@ const NewsManager = () => {
             cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem', fontFamily: 'inherit',
           }}>
           {showForm ? '✕ ' : '➕ '}
-          {showForm ? (language === 'fa' ? 'انصراف' : 'Cancel') : (language === 'fa' ? 'خبر جدید' : 'New News')}
+          {showForm ? (isFa ? 'انصراف' : 'Cancel') : (isFa ? 'خبر جدید' : 'New News')}
         </motion.button>
       </div>
 
@@ -118,11 +150,11 @@ const NewsManager = () => {
         <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
           style={{
             padding: '12px 16px', borderRadius: '12px',
-            background: messageType === 'success' ? 'rgba(76,175,80,0.15)' : 'rgba(255,68,68,0.15)',
-            color: messageType === 'success' ? '#4CAF50' : '#ff4444',
+            background: messageType === 'success' ? 'rgba(76,175,80,0.15)' : messageType === 'info' ? 'rgba(33,150,243,0.15)' : 'rgba(255,68,68,0.15)',
+            color: messageType === 'success' ? '#4CAF50' : messageType === 'info' ? '#2196F3' : '#ff4444',
             fontSize: '0.9rem', marginBottom: '20px', textAlign: 'center',
           }}>
-          {messageType === 'success' ? '✅ ' : '❌ '}{message}
+          {messageType === 'success' ? '✅ ' : messageType === 'info' ? 'ℹ️ ' : '❌ '}{message}
         </motion.p>
       )}
 
@@ -137,24 +169,24 @@ const NewsManager = () => {
             }}>
             <h4 style={{ color: colors.text, marginBottom: '20px' }}>
               {editingId ? '✏️ ' : '📝 '}
-              {editingId ? (language === 'fa' ? 'ویرایش خبر' : 'Edit News') : (language === 'fa' ? 'خبر جدید' : 'New News')}
+              {editingId ? (isFa ? 'ویرایش خبر' : 'Edit News') : (isFa ? 'خبر جدید' : 'New News')}
             </h4>
 
             <div style={{ display: 'grid', gap: '15px', marginBottom: '20px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                 <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-                  placeholder={language === 'fa' ? 'عنوان فارسی *' : 'Persian Title *'}
+                  placeholder={isFa ? 'عنوان فارسی *' : 'Persian Title *'}
                   style={{ padding: '12px 16px', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', color: colors.text, fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit' }} />
                 <input type="text" value={titleEn} onChange={(e) => setTitleEn(e.target.value)}
-                  placeholder={language === 'fa' ? 'عنوان انگلیسی' : 'English Title'}
+                  placeholder={isFa ? 'عنوان انگلیسی (خودکار ترجمه می‌شود)' : 'English Title (auto-translated)'}
                   style={{ padding: '12px 16px', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', color: colors.text, fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                 <textarea value={content} onChange={(e) => setContent(e.target.value)}
-                  placeholder={language === 'fa' ? 'متن فارسی *' : 'Persian Content *'} rows="3"
+                  placeholder={isFa ? 'متن فارسی *' : 'Persian Content *'} rows="3"
                   style={{ padding: '12px 16px', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', color: colors.text, fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit', resize: 'vertical' }} />
                 <textarea value={contentEn} onChange={(e) => setContentEn(e.target.value)}
-                  placeholder={language === 'fa' ? 'متن انگلیسی' : 'English Content'} rows="3"
+                  placeholder={isFa ? 'متن انگلیسی (خودکار ترجمه می‌شود)' : 'English Content (auto-translated)'} rows="3"
                   style={{ padding: '12px 16px', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: '12px', color: colors.text, fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit', resize: 'vertical' }} />
               </div>
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -176,7 +208,7 @@ const NewsManager = () => {
             <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
               style={{ padding: '12px 30px', background: colors.accent, border: 'none', borderRadius: '12px', color: '#fff', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem', fontFamily: 'inherit' }}>
               {editingId ? '✅ ' : '📤 '}
-              {editingId ? (language === 'fa' ? 'بروزرسانی' : 'Update') : (language === 'fa' ? 'انتشار' : 'Publish')}
+              {editingId ? (isFa ? 'بروزرسانی' : 'Update') : (isFa ? 'انتشار' : 'Publish')}
             </motion.button>
           </motion.form>
         )}
@@ -186,7 +218,7 @@ const NewsManager = () => {
         {news.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: colors.textSecondary }}>
             <span style={{ fontSize: '3rem' }}>📭</span>
-            <p>{language === 'fa' ? 'هیچ خبری وجود ندارد' : 'No news found'}</p>
+            <p>{isFa ? 'هیچ خبری وجود ندارد' : 'No news found'}</p>
           </div>
         ) : (
           news.map((item) => {

@@ -6,8 +6,9 @@ import { useNews } from '../context/NewsContext';
 
 const NotificationModal = ({ isOpen, onClose }) => {
   const { colors, isDarkMode } = useTheme();
-  const { t, language } = useLanguageContext();
+  const { language } = useLanguageContext();
   const { news } = useNews();
+  const isFa = language === 'fa';
 
   const categoryIcons = {
     general: '📋', tournament: '🏆', update: '🔄', event: '🎉', team: '👥',
@@ -46,7 +47,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
               maxWidth: '550px', width: '100%', maxHeight: '80vh',
               overflow: 'hidden', display: 'flex', flexDirection: 'column',
               boxShadow: `0 20px 60px ${isDarkMode ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.2)'}`,
-              direction: language === 'fa' ? 'rtl' : 'ltr',
+              direction: isFa ? 'rtl' : 'ltr',
             }}
           >
             {/* Header */}
@@ -56,7 +57,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
               borderBottom: `1px solid ${colors.border}`,
             }}>
               <h2 style={{ color: colors.text, fontSize: '1.3rem', fontWeight: 700, margin: 0 }}>
-                🔔 {t('notif.title')}
+                🔔 {isFa ? 'اعلان‌ها و اخبار' : 'Notifications & News'}
               </h2>
               <motion.button
                 whileHover={{ scale: 1.05, backgroundColor: `${colors.accent}20` }}
@@ -72,11 +73,11 @@ const NotificationModal = ({ isOpen, onClose }) => {
             </div>
 
             {/* News List */}
-            <div style={{ overflowY: 'auto', flex: 1, paddingRight: language === 'fa' ? '5px' : '0' }}>
+            <div style={{ overflowY: 'auto', flex: 1, paddingRight: isFa ? '5px' : '0' }}>
               {news.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px', color: colors.textSecondary }}>
                   <span style={{ fontSize: '3rem' }}>📭</span>
-                  <p>{language === 'fa' ? 'خبری موجود نیست' : 'No news available'}</p>
+                  <p>{isFa ? 'خبری موجود نیست' : 'No news available'}</p>
                 </div>
               ) : (
                 news.map((item, index) => {
@@ -112,7 +113,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                               color: colors.text, fontSize: '0.95rem', fontWeight: 600,
                               margin: 0, wordBreak: 'break-word',
                             }}>
-                              {language === 'fa' ? item.title : (item.titleEn || item.title)}
+                              {isFa ? item.title : (item.titleEn || item.title)}
                             </h4>
                             <span style={{
                               fontSize: '0.7rem', color: colors.textSecondary,
@@ -125,7 +126,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                             color: colors.textSecondary, fontSize: '0.85rem',
                             margin: 0, lineHeight: 1.5, wordBreak: 'break-word',
                           }}>
-                            {language === 'fa' ? item.content : (item.contentEn || item.content)}
+                            {isFa ? item.content : (item.contentEn || item.content)}
                           </p>
                         </div>
                       </div>
@@ -145,7 +146,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                 fontSize: '0.95rem', fontWeight: 600, marginTop: '18px',
                 width: '100%', transition: 'all 0.15s ease',
               }}>
-              {language === 'fa' ? 'بستن' : 'Close'}
+              {isFa ? 'بستن' : 'Close'}
             </motion.button>
           </motion.div>
         </motion.div>

@@ -11,26 +11,78 @@ import Navbar from "./components/Navbar";
 import BackgroundAnimation from "./components/BackgroundAnimation";
 import NotificationBar from "./components/NotificationBar";
 import NotificationModal from "./components/NotificationModal";
+import NewsSlider from "./components/News/NewsSlider";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import "./styles/globals.css";
+
+const featuresData = [
+  {
+    key: "voiceChat",
+    icon: "🎙️",
+    titleFa: "چت صوتی با کیفیت بالا",
+    titleEn: "High Quality Voice Chat",
+    descFa: "از چت صوتی کریستالی و بدون تاخیر لذت ببرید",
+    descEn: "Enjoy crystal clear voice chat with no delay",
+  },
+  {
+    key: "customBots",
+    icon: "🤖",
+    titleFa: "بات‌های اختصاصی",
+    titleEn: "Custom Bots",
+    descFa: "بات‌های مخصوص با قابلیت‌های منحصر به فرد",
+    descEn: "Special bots with unique capabilities",
+  },
+  {
+    key: "events",
+    icon: "🎪",
+    titleFa: "ایونت‌های هفتگی",
+    titleEn: "Weekly Events",
+    descFa: "هر هفته ایونت‌های جدید و هیجان‌انگیز",
+    descEn: "New and exciting events every week",
+  },
+  {
+    key: "support",
+    icon: "💬",
+    titleFa: "پشتیبانی ۲۴/۷",
+    titleEn: "24/7 Support",
+    descFa: "تیم پشتیبانی همیشه آنلاین و آماده کمک",
+    descEn: "Support team always online and ready to help",
+  },
+  {
+    key: "competitions",
+    icon: "🏆",
+    titleFa: "مسابقات با جوایز",
+    titleEn: "Prize Competitions",
+    descFa: "در مسابقات شرکت کنید و جوایز ببرید",
+    descEn: "Join competitions and win prizes",
+  },
+  {
+    key: "customRoles",
+    icon: "👑",
+    titleFa: "رول‌های اختصاصی",
+    titleEn: "Custom Roles",
+    descFa: "رول‌های شخصی‌سازی شده برای اعضا",
+    descEn: "Personalized roles for members",
+  },
+];
 
 const AppContent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const { isDarkMode, colors } = useTheme();
-  const { t } = useLanguageContext();
+  const { language } = useLanguageContext();
   const { currentUser } = useAuth();
 
-  // اگر می‌خواهد پنل ادمین ببیند
+  const isFa = language === "fa";
+
   if (showAdmin) {
     if (currentUser) {
       return <Dashboard onBack={() => setShowAdmin(false)} />;
     }
     return <Login />;
   }
-  
-  // صفحه اصلی سایت
+
   return (
     <div
       style={{
@@ -39,16 +91,11 @@ const AppContent = () => {
         transition: "color 0.3s ease, background 0.3s ease",
       }}
     >
-      {/* پس‌زمینه متحرک */}
       <BackgroundAnimation />
-      
-      {/* نوبار با دکمه اخبار */}
       <Navbar onOpenNewsModal={() => setIsModalOpen(true)} />
-      
-      {/* نوار اعلان بالا */}
       <NotificationBar onOpenModal={() => setIsModalOpen(true)} />
 
-      {/* بخش Hero */}
+      {/* Hero Section */}
       <div
         style={{
           paddingTop: "120px",
@@ -61,7 +108,6 @@ const AppContent = () => {
           direction: "rtl",
         }}
       >
-        {/* تایتل اصلی */}
         <motion.h1
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -74,10 +120,9 @@ const AppContent = () => {
             textShadow: `0 0 30px ${colors.accent}30`,
           }}
         >
-          🎮 {t("hero.title")}
+          🎮 {isFa ? "به دنیای دارک لایت خوش آمدید" : "Welcome to DarkLight World"}
         </motion.h1>
 
-        {/* زیرعنوان */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -89,10 +134,9 @@ const AppContent = () => {
             fontWeight: 500,
           }}
         >
-          {t("hero.subtitle")}
+          {isFa ? "جامعه‌ای پر از انرژی و ماجراجویی" : "A Community Full of Energy and Adventure"}
         </motion.p>
 
-        {/* توضیحات */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -104,10 +148,9 @@ const AppContent = () => {
             opacity: 0.8,
           }}
         >
-          {t("hero.description")}
+          {isFa ? "بهترین تجربه گیمینگ رو با ما داشته باشید" : "Experience the best gaming moments with us"}
         </motion.p>
 
-        {/* دکمه‌های Hero */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -119,7 +162,6 @@ const AppContent = () => {
             justifyContent: "center",
           }}
         >
-          {/* دکمه اتصال به TeamSpeak */}
           <motion.button
             whileHover={{
               scale: 1.05,
@@ -140,10 +182,9 @@ const AppContent = () => {
               boxShadow: `0 5px 15px ${colors.accent}30`,
             }}
           >
-            🎙️ {t("hero.joinButton")}
+            🎙️ {isFa ? "عضویت در سرور" : "Join Server"}
           </motion.button>
 
-          {/* دکمه بیشتر بدانید */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -164,100 +205,13 @@ const AppContent = () => {
               transition: "all 0.3s ease",
             }}
           >
-            {t("hero.learnMore")}
+            {isFa ? "بیشتر بدانید" : "Learn More"}
           </motion.button>
         </motion.div>
-
-        {/* Status Box */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.8 }}
-          style={{
-            marginTop: "60px",
-            padding: "25px 35px",
-            background: colors.card,
-            border: `1px solid ${colors.border}`,
-            borderRadius: "20px",
-            display: "flex",
-            gap: "40px",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            boxShadow: `0 10px 30px ${isDarkMode ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.1)"}`,
-            backdropFilter: "blur(20px)",
-          }}
-        >
-          {/* تم فعلی */}
-          <div style={{ textAlign: "center" }}>
-            <div
-              style={{
-                fontSize: "0.9rem",
-                color: colors.textSecondary,
-                marginBottom: "5px",
-              }}
-            >
-              {t("currentTheme")}
-            </div>
-            <div
-              style={{
-                fontSize: "1.1rem",
-                fontWeight: 700,
-                color: colors.text,
-              }}
-            >
-              {isDarkMode ? t("darkMode") : t("lightMode")}
-            </div>
-          </div>
-
-          <div style={{ width: "1px", background: colors.border }} />
-
-          {/* زبان فعلی */}
-          <div style={{ textAlign: "center" }}>
-            <div
-              style={{
-                fontSize: "0.9rem",
-                color: colors.textSecondary,
-                marginBottom: "5px",
-              }}
-            >
-              {t("currentLang")}
-            </div>
-            <div
-              style={{
-                fontSize: "1.1rem",
-                fontWeight: 700,
-                color: colors.text,
-              }}
-            >
-              {t("langName")}
-            </div>
-          </div>
-
-          <div style={{ width: "1px", background: colors.border }} />
-
-          {/* آدرس سرور */}
-          <div style={{ textAlign: "center" }}>
-            <div
-              style={{
-                fontSize: "0.9rem",
-                color: colors.textSecondary,
-                marginBottom: "5px",
-              }}
-            >
-              🎙️ Server
-            </div>
-            <div
-              style={{
-                fontSize: "1.1rem",
-                fontWeight: 700,
-                color: colors.accent,
-              }}
-            >
-              dayts.ir
-            </div>
-          </div>
-        </motion.div>
       </div>
+
+      {/* News Slider */}
+      <NewsSlider />
 
       {/* Features Section */}
       <div
@@ -268,7 +222,6 @@ const AppContent = () => {
           margin: "0 auto",
         }}
       >
-        {/* تایتل بخش Features */}
         <motion.h2
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -280,10 +233,9 @@ const AppContent = () => {
             fontWeight: 700,
           }}
         >
-          {t("features.title")}
+          {isFa ? "✨ امکانات ویژه سرور" : "✨ Special Server Features"}
         </motion.h2>
 
-        {/* گرید کارت‌های Features */}
         <div
           style={{
             display: "grid",
@@ -292,16 +244,9 @@ const AppContent = () => {
             direction: "rtl",
           }}
         >
-          {[
-            "voiceChat",
-            "customBots",
-            "events",
-            "support",
-            "competitions",
-            "customRoles",
-          ].map((feature, index) => (
+          {featuresData.map((feature, index) => (
             <motion.div
-              key={index}
+              key={feature.key}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -319,16 +264,9 @@ const AppContent = () => {
                 cursor: "default",
               }}
             >
-              {/* آیکون */}
               <div style={{ fontSize: "3rem", marginBottom: "20px" }}>
-                {feature === "voiceChat" && "🎙️"}
-                {feature === "customBots" && "🤖"}
-                {feature === "events" && "🎪"}
-                {feature === "support" && "💬"}
-                {feature === "competitions" && "🏆"}
-                {feature === "customRoles" && "👑"}
+                {feature.icon}
               </div>
-              {/* عنوان کارت */}
               <h3
                 style={{
                   color: colors.accent,
@@ -337,9 +275,8 @@ const AppContent = () => {
                   fontWeight: 700,
                 }}
               >
-                {t(`features.${feature}`)}
+                {isFa ? feature.titleFa : feature.titleEn}
               </h3>
-              {/* توضیحات کارت */}
               <p
                 style={{
                   color: colors.textSecondary,
@@ -347,7 +284,7 @@ const AppContent = () => {
                   lineHeight: 1.6,
                 }}
               >
-                {t(`features.${feature}Desc`)}
+                {isFa ? feature.descFa : feature.descEn}
               </p>
             </motion.div>
           ))}
@@ -364,10 +301,13 @@ const AppContent = () => {
           marginTop: "50px",
         }}
       >
-        <p style={{ marginBottom: "5px" }}>{t("footer.text")}</p>
-        <p style={{ fontSize: "0.9rem" }}>{t("footer.rights")}</p>
-        
-        {/* دکمه مخفی ورود به پنل ادمین */}
+        <p style={{ marginBottom: "5px" }}>
+          {isFa ? "ساخته شده با ❤️ برای سرور دارک لایت" : "Made with ❤️ for Dark Light Server"}
+        </p>
+        <p style={{ fontSize: "0.9rem" }}>
+          {isFa ? "© 2026. تمامی حقوق محفوظ است" : "© 2026 All Rights Reserved"}
+        </p>
+
         <p
           onClick={() => setShowAdmin(true)}
           style={{
@@ -386,7 +326,6 @@ const AppContent = () => {
         </p>
       </footer>
 
-      {/* مودال اعلان‌ها */}
       <NotificationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -395,7 +334,6 @@ const AppContent = () => {
   );
 };
 
-// فقط یک App داشته باشیم
 const App = () => {
   return (
     <ThemeProvider>
