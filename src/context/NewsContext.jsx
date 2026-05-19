@@ -2,51 +2,51 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const NewsContext = createContext();
 
-export const useNews = () => {
-  const context = useContext(NewsContext);
-  if (!context) throw new Error('useNews must be used within NewsProvider');
-  return context;
-};
+export const useNews = () => useContext(NewsContext);
 
 export const NewsProvider = ({ children }) => {
   const [news, setNews] = useState([]);
 
-  const loadNews = () => {
-    fetch('/api/news?_sort=id&_order=desc')
-      .then(res => res.json())
-      .then(data => setNews(data))
-      .catch(() => {});
+  const loadNews = async () => {
+    try {
+      const res = await fetch('/api/news?_sort=id&_order=desc');
+      const data = await res.json();
+      setNews(data);
+    } catch (e) {
+      console.log('Load failed');
+    }
   };
 
   useEffect(() => {
     loadNews();
   }, []);
 
-  const addNews = (newsItem) => {
-    const newItem = { ...newsItem, date: new Date().toISOString().split('T')[0], published: true };
-    fetch('/api/news', {
+  const addNews = async (newsItem) => {
+    const newItem = {
+      ...newsItem,
+      date: new Date().toISOString().split('T')[0],
+      published: true,
+    };
+    await fetch('/api/news', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newItem),
-    })
-    .then(() => loadNews())
-    .catch(() => {});
+    });
+    await loadNews();
   };
 
-  const updateNews = (id, updatedItem) => {
-    fetch(`/api/news/${id}`, {
+  const updateNews = async (id, updatedItem) => {
+    await fetch(`/api/news/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedItem),
-    })
-    .then(() => loadNews())
-    .catch(() => {});
+    });
+    await loadNews();
   };
 
-  const deleteNews = (id) => {
-    fetch(`/api/news/${id}`, { method: 'DELETE' })
-      .then(() => loadNews())
-      .catch(() => {});
+  const deleteNews = async (id) => {
+    await fetch(`/api/news/${id}`, { method: 'DELETE' });
+    await loadNews();
   };
 
   return (
