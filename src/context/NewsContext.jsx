@@ -24,16 +24,20 @@ export const NewsProvider = ({ children }) => {
   }, []);
 
   const addNews = (newsItem) => {
-    const newItem = { ...newsItem, id: Date.now(), date: new Date().toISOString().split('T')[0], published: true };
+    const newItem = { ...newsItem, date: new Date().toISOString().split('T')[0], published: true };
     
     fetch('/api/news', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newItem),
-    }).catch(() => {});
-
-    setNews(prev => [newItem, ...prev]);
-    return newItem;
+    })
+    .then(res => res.json())
+    .then(savedItem => {
+      setNews(prev => [savedItem, ...prev]);
+    })
+    .catch(() => {
+      setNews(prev => [{ ...newItem, id: Date.now() }, ...prev]);
+    });
   };
 
   const updateNews = (id, updatedItem) => {
@@ -41,14 +45,19 @@ export const NewsProvider = ({ children }) => {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedItem),
-    }).catch(() => {});
-    
-    setNews(prev => prev.map(item => item.id === id ? { ...item, ...updatedItem } : item));
+    })
+    .then(() => {
+      setNews(prev => prev.map(item => item.id === id ? { ...item, ...updatedItem } : item));
+    })
+    .catch(() => {});
   };
 
   const deleteNews = (id) => {
-    fetch(`/api/news/${id}`, { method: 'DELETE' }).catch(() => {});
-    setNews(prev => prev.filter(item => item.id !== id));
+    fetch(`/api/news/${id}`, { method: 'DELETE' })
+      .then(() => {
+        setNews(prev => prev.filter(item => item.id !== id));
+      })
+      .catch(() => {});
   };
 
   return (
