@@ -8,44 +8,25 @@ export const useNews = () => {
   return context;
 };
 
-const DEFAULT_NEWS = [];
-
 export const NewsProvider = ({ children }) => {
-  const [news, setNews] = useState(DEFAULT_NEWS);
+  const [news, setNews] = useState([]);
 
-  // لود از API موقع شروع
+  // لود از API
   useEffect(() => {
-    fetch('http://localhost:3001/news?_sort=id&_order=desc')
+    fetch('/api/news?_sort=id&_order=desc')
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
           setNews(data);
-          localStorage.setItem('dl-news', JSON.stringify(data));
-        } else {
-          // از localStorage بخون
-          const saved = localStorage.getItem('dl-news');
-          if (saved) setNews(JSON.parse(saved));
         }
       })
-      .catch(() => {
-        // API نیست - localStorage
-        const saved = localStorage.getItem('dl-news');
-        if (saved) setNews(JSON.parse(saved));
-      });
+      .catch(() => {});
   }, []);
-
-  // ذخیره توی localStorage
-  useEffect(() => {
-    if (news.length > 0) {
-      localStorage.setItem('dl-news', JSON.stringify(news));
-    }
-  }, [news]);
 
   const addNews = (newsItem) => {
     const newItem = { ...newsItem, id: Date.now(), date: new Date().toISOString().split('T')[0], published: true };
     
-    // ذخیره توی API
-    fetch('http://localhost:3001/news', {
+    fetch('/api/news', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newItem),
@@ -56,7 +37,7 @@ export const NewsProvider = ({ children }) => {
   };
 
   const updateNews = (id, updatedItem) => {
-    fetch(`http://localhost:3001/news/${id}`, {
+    fetch(`/api/news/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedItem),
@@ -66,7 +47,7 @@ export const NewsProvider = ({ children }) => {
   };
 
   const deleteNews = (id) => {
-    fetch(`http://localhost:3001/news/${id}`, { method: 'DELETE' }).catch(() => {});
+    fetch(`/api/news/${id}`, { method: 'DELETE' }).catch(() => {});
     setNews(prev => prev.filter(item => item.id !== id));
   };
 
