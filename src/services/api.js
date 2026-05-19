@@ -1,122 +1,75 @@
-const API_URL = 'http://localhost:3001';
+const API_URL = '/api';
 
 export const api = {
   getNews: async () => {
     try {
       const res = await fetch(`${API_URL}/news?_sort=id&_order=desc`);
-      if (!res.ok) throw new Error('API not available');
       return await res.json();
-    } catch (error) {
-      console.log('API not available, using localStorage');
+    } catch (e) {
       const saved = localStorage.getItem('dl-news');
       return saved ? JSON.parse(saved) : [];
     }
   },
 
   addNews: async (news) => {
-    try {
-      const res = await fetch(`${API_URL}/news`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(news),
-      });
-      if (!res.ok) throw new Error('API not available');
-      return await res.json();
-    } catch (error) {
-      // Fallback: برگردوندن داده محلی
-      return { ...news, id: Date.now() };
-    }
+    const res = await fetch(`${API_URL}/news`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(news),
+    });
+    return await res.json();
   },
 
   updateNews: async (id, news) => {
-    try {
-      const res = await fetch(`${API_URL}/news/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(news),
-      });
-      if (!res.ok) throw new Error('API not available');
-      return await res.json();
-    } catch (error) {
-      return { ...news, id };
-    }
+    const res = await fetch(`${API_URL}/news/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(news),
+    });
+    return await res.json();
   },
 
   deleteNews: async (id) => {
-    try {
-      await fetch(`${API_URL}/news/${id}`, { method: 'DELETE' });
-      return true;
-    } catch (error) {
-      return true;
-    }
+    await fetch(`${API_URL}/news/${id}`, { method: 'DELETE' });
+    return true;
   },
 
   getUsers: async () => {
     try {
       const res = await fetch(`${API_URL}/users`);
-      if (!res.ok) throw new Error('API not available');
       return await res.json();
-    } catch (error) {
+    } catch (e) {
       const saved = localStorage.getItem('dl-users');
       return saved ? JSON.parse(saved) : [];
     }
   },
 
   addUser: async (user) => {
-    try {
-      const res = await fetch(`${API_URL}/users`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user),
-      });
-      if (!res.ok) throw new Error('API not available');
-      return await res.json();
-    } catch (error) {
-      return { ...user, id: Date.now() };
-    }
+    const res = await fetch(`${API_URL}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user),
+    });
+    return await res.json();
   },
 
   deleteUser: async (id) => {
-    try {
-      await fetch(`${API_URL}/users/${id}`, { method: 'DELETE' });
-      return true;
-    } catch (error) {
-      return true;
-    }
+    await fetch(`${API_URL}/users/${id}`, { method: 'DELETE' });
+    return true;
   },
-};
-// ترجمه خودکار با LibreTranslate
-export const translateText = async (text, from, to) => {
-  if (!text) return '';
-  try {
-    const res = await fetch('https://libretranslate.de/translate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        q: text,
-        source: from,
-        target: to,
-        format: 'text',
-      }),
-    });
-    const data = await res.json();
-    return data.translatedText || text;
-  } catch (error) {
-    // اگه libretranslate.de کار نکرد، از آینه‌ها استفاده کن
+
+  translateText: async (text, from, to) => {
+    if (!text) return '';
     try {
-      const res = await fetch('https://translate.argosopentech.com/translate', {
+      const res = await fetch('https://libretranslate.de/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          q: text,
-          source: from,
-          target: to,
-        }),
+        body: JSON.stringify({ q: text, source: from, target: to, format: 'text' }),
       });
       const data = await res.json();
       return data.translatedText || text;
-    } catch (err) {
+    } catch (e) {
       return text;
     }
-  }
+  },
 };
