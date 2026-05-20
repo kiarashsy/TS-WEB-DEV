@@ -37,10 +37,18 @@ const Navbar = ({ onOpenNewsModal }) => {
         direction: 'rtl'
       }}
     >
-      {/* Logo */}
+      {/* Logo - کلیک = تغییر تم */}
       <motion.div 
         whileHover={{ scale: 1.05 }}
-        style={{ fontSize: '1.8rem', fontWeight: 'bold' }}
+        whileTap={{ scale: 0.9 }}
+        onClick={toggleTheme}
+        style={{ 
+          fontSize: '1.8rem', 
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          userSelect: 'none',
+        }}
+        title="Click to change theme"
       >
         <span style={{ color: colors.text }}>Dark</span>
         <span style={{ color: colors.accent }}>Light</span>
@@ -70,27 +78,31 @@ const Navbar = ({ onOpenNewsModal }) => {
 
       {/* Action Buttons */}
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-        {/* Language Toggle */}
+        {/* Language Toggle - پرچم کشور */}
         <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={toggleLanguage}
           style={{ 
-            background: colors.accent,
-            border: 'none',
-            color: '#fff', 
+            background: 'transparent',
+            border: `1px solid ${colors.border}`,
             cursor: 'pointer',
-            padding: '8px 18px',
+            padding: '8px 12px',
             borderRadius: '10px',
-            fontSize: '0.9rem',
-            fontWeight: 700,
-            transition: 'all 0.3s ease'
+            fontSize: '1.4rem',
+            transition: 'all 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '44px',
+            height: '44px',
           }}
+          title={language === 'fa' ? 'Switch to English' : 'تغییر به فارسی'}
         >
-          {language === 'fa' ? '🇬🇧 EN' : '🇮🇷 FA'}
+          {language === 'fa' ? '🇮🇷' : '🇬🇧'}
         </motion.button>
 
-        {/* Theme Toggle */}
+        {/* Theme Toggle - آیکون خورشید/ماه */}
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

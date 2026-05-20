@@ -7,18 +7,16 @@ export const useNews = () => useContext(NewsContext);
 export const NewsProvider = ({ children }) => {
   const [news, setNews] = useState([]);
 
-  const loadNews = async () => {
-    try {
-      const res = await fetch('/api/news?_sort=id&_order=desc');
-      const data = await res.json();
-      setNews(data);
-    } catch (e) {
-      console.log('Load failed');
-    }
-  };
-
+  // Load from API on start
   useEffect(() => {
-    loadNews();
+    fetch('/api/news?_sort=id&_order=desc')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setNews(data);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const addNews = async (newsItem) => {
@@ -27,12 +25,17 @@ export const NewsProvider = ({ children }) => {
       date: new Date().toISOString().split('T')[0],
       published: true,
     };
-    await fetch('/api/news', {
+
+    // Save to API → db.json
+    const res = await fetch('/api/news', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newItem),
     });
-    await loadNews();
+    const savedItem = await res.json();
+    
+    // Update state
+    setNews(prev => [savedItem, ...prev]);
   };
 
   const updateNews = async (id, updatedItem) => {
@@ -41,12 +44,16 @@ export const NewsProvider = ({ children }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedItem),
     });
-    await loadNews();
+    
+    // Reload from API
+    const res = await fetch('/api/news?_sort=id&_order=desc');
+    const data = await res.json();
+    setNews(data);
   };
 
   const deleteNews = async (id) => {
     await fetch(`/api/news/${id}`, { method: 'DELETE' });
-    await loadNews();
+    setNews(prev => prev.filter(item => item.id !== id));
   };
 
   return (

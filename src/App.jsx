@@ -15,6 +15,7 @@ import NewsSlider from "./components/News/NewsSlider";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import "./styles/globals.css";
+import Team from './pages/Team';
 
 const featuresData = [
   {
@@ -82,7 +83,7 @@ const AppContent = () => {
     }
     return <Login />;
   }
-
+  <Route path="/team" element={<Team />} />
   return (
     <div
       style={{
