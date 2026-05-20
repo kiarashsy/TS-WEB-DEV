@@ -1,41 +1,27 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const NewsContext = createContext();
-
 export const useNews = () => useContext(NewsContext);
 
 export const NewsProvider = ({ children }) => {
   const [news, setNews] = useState([]);
 
-  // Load from API on start
-  useEffect(() => {
+  const loadNews = () => {
     fetch('/api/news?_sort=id&_order=desc')
       .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          setNews(data);
-        }
-      })
+      .then(data => setNews(data))
       .catch(() => {});
-  }, []);
+  };
+
+  useEffect(() => { loadNews(); }, []);
 
   const addNews = async (newsItem) => {
-    const newItem = {
-      ...newsItem,
-      date: new Date().toISOString().split('T')[0],
-      published: true,
-    };
-
-    // Save to API → db.json
-    const res = await fetch('/api/news', {
+    await fetch('/api/news', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newItem),
+      body: JSON.stringify({ ...newsItem, date: new Date().toISOString().split('T')[0], published: true }),
     });
-    const savedItem = await res.json();
-    
-    // Update state
-    setNews(prev => [savedItem, ...prev]);
+    loadNews();
   };
 
   const updateNews = async (id, updatedItem) => {
@@ -44,16 +30,12 @@ export const NewsProvider = ({ children }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedItem),
     });
-    
-    // Reload from API
-    const res = await fetch('/api/news?_sort=id&_order=desc');
-    const data = await res.json();
-    setNews(data);
+    loadNews();
   };
 
   const deleteNews = async (id) => {
     await fetch(`/api/news/${id}`, { method: 'DELETE' });
-    setNews(prev => prev.filter(item => item.id !== id));
+    loadNews();
   };
 
   return (

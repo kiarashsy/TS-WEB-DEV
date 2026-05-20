@@ -12,10 +12,10 @@ import BackgroundAnimation from "./components/BackgroundAnimation";
 import NotificationBar from "./components/NotificationBar";
 import NotificationModal from "./components/NotificationModal";
 import NewsSlider from "./components/News/NewsSlider";
+import Team from "./pages/Team";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import "./styles/globals.css";
-import Team from './pages/Team';
 
 const featuresData = [
   {
@@ -83,7 +83,7 @@ const AppContent = () => {
     }
     return <Login />;
   }
-  <Route path="/team" element={<Team />} />
+
   return (
     <div
       style={{
@@ -290,6 +290,11 @@ const AppContent = () => {
             </motion.div>
           ))}
         </div>
+      </div>
+
+      {/* Team Section */}
+      <div id="team">
+        <Team />
       </div>
 
       {/* Footer */}
