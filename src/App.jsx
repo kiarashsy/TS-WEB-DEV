@@ -292,11 +292,6 @@ const AppContent = () => {
         </div>
       </div>
 
-      {/* Team Section */}
-      <div id="team">
-        <Team />
-      </div>
-
       {/* Footer */}
       <footer
         style={{
