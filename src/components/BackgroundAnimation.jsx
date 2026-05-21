@@ -16,17 +16,17 @@ const BackgroundAnimation = () => {
     const particles = [];
     const colorsArray = isDarkMode 
       ? ['#1e3a5f', '#2196f3', '#4fc3f7', '#81d4fa', '#1565c0']
-      : ['#e3f2fd', '#bbdefb', '#90caf9', '#64b5f6', '#42a5f5'];
+      : ['#bbdefb', '#90caf9', '#64b5f6', '#42a5f5', '#2196f3'];
     
     class Particle {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 3 + 1;
-        this.speedX = Math.random() * 0.5 - 0.25;
-        this.speedY = Math.random() * 0.5 - 0.25;
+        this.size = Math.random() * 4 + 1.5;
+        this.speedX = Math.random() * 0.6 - 0.3;
+        this.speedY = Math.random() * 0.6 - 0.3;
         this.color = colorsArray[Math.floor(Math.random() * colorsArray.length)];
-        this.opacity = Math.random() * 0.5 + 0.2;
+        this.opacity = Math.random() * 0.6 + 0.3;
       }
       
       update() {
@@ -48,7 +48,9 @@ const BackgroundAnimation = () => {
       }
     }
     
-    for (let i = 0; i < 100; i++) {
+    // تعداد ذرات: تم لایت ۲۰۰ تا، تم دارک ۱۰۰ تا
+    const particleCount = isDarkMode ? 100 : 200;
+    for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle());
     }
     
