@@ -50,22 +50,15 @@ const TeamModal = ({ isOpen, onClose, colors, isDarkMode }) => {
               👥 تیم ما
             </h2>
 
-            {/* Founders */}
             <div style={{ marginBottom: '25px' }}>
               <h3 style={{ color: '#FFD700', marginBottom: '15px', fontSize: '1.1rem' }}>👑 Founders</h3>
               <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <div style={{
-                  background: `${colors.card}ee`, border: `1px solid ${colors.border}`,
-                  borderRadius: '16px', padding: '20px', minWidth: '140px',
-                }}>
+                <div style={{ background: `${colors.card}ee`, border: `1px solid ${colors.border}`, borderRadius: '16px', padding: '20px', minWidth: '140px' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>👑</div>
                   <div style={{ color: colors.text, fontWeight: 700, fontSize: '1.1rem' }}>30Bil</div>
                   <div style={{ color: '#FFD700', fontSize: '0.8rem', marginTop: '4px' }}>Founder</div>
                 </div>
-                <div style={{
-                  background: `${colors.card}ee`, border: `1px solid ${colors.border}`,
-                  borderRadius: '16px', padding: '20px', minWidth: '140px',
-                }}>
+                <div style={{ background: `${colors.card}ee`, border: `1px solid ${colors.border}`, borderRadius: '16px', padding: '20px', minWidth: '140px' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>👑</div>
                   <div style={{ color: colors.text, fontWeight: 700, fontSize: '1.1rem' }}>DANI</div>
                   <div style={{ color: '#FFD700', fontSize: '0.8rem', marginTop: '4px' }}>Founder</div>
@@ -73,22 +66,15 @@ const TeamModal = ({ isOpen, onClose, colors, isDarkMode }) => {
               </div>
             </div>
 
-            {/* Developers */}
             <div>
               <h3 style={{ color: '#2196F3', marginBottom: '15px', fontSize: '1.1rem' }}>💻 Developers</h3>
               <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <div style={{
-                  background: `${colors.card}ee`, border: `1px solid ${colors.border}`,
-                  borderRadius: '16px', padding: '20px', minWidth: '140px',
-                }}>
+                <div style={{ background: `${colors.card}ee`, border: `1px solid ${colors.border}`, borderRadius: '16px', padding: '20px', minWidth: '140px' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>💻</div>
                   <div style={{ color: colors.text, fontWeight: 700, fontSize: '1.1rem' }}>Kiarashsy</div>
                   <div style={{ color: '#2196F3', fontSize: '0.8rem', marginTop: '4px' }}>Web Developer</div>
                 </div>
-                <div style={{
-                  background: `${colors.card}ee`, border: `1px solid ${colors.border}`,
-                  borderRadius: '16px', padding: '20px', minWidth: '140px',
-                }}>
+                <div style={{ background: `${colors.card}ee`, border: `1px solid ${colors.border}`, borderRadius: '16px', padding: '20px', minWidth: '140px' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🖥️</div>
                   <div style={{ color: colors.text, fontWeight: 700, fontSize: '1.1rem' }}>Biozed</div>
                   <div style={{ color: '#4CAF50', fontSize: '0.8rem', marginTop: '4px' }}>Screen Share Dev</div>
@@ -101,23 +87,26 @@ const TeamModal = ({ isOpen, onClose, colors, isDarkMode }) => {
     </AnimatePresence>
   );
 };
-{
-const handleNavClick = (item, e) => {
+
+const Navbar = ({ onOpenNewsModal }) => {
+  const [isTeamOpen, setIsTeamOpen] = useState(false);
+  const { isDarkMode, toggleTheme, colors } = useTheme();
+  const { language, toggleLanguage, t } = useLanguageContext();
+
+  const handleNavClick = (item, e) => {
     if (item === 'news') {
       e.preventDefault();
       if (onOpenNewsModal) onOpenNewsModal();
-      return;
     }
     if (item === 'team') {
       e.preventDefault();
       setIsTeamOpen(true);
-      return;
     }
   };
 
   return (
     <>
-      <motion.nav 
+      <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100 }}
@@ -130,8 +119,7 @@ const handleNavClick = (item, e) => {
           color: colors.text, transition: 'all 0.3s ease', direction: 'rtl'
         }}
       >
-        {/* Logo - کلیک = تغییر تم */}
-        <motion.div 
+        <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.9 }}
           onClick={toggleTheme}
@@ -142,10 +130,9 @@ const handleNavClick = (item, e) => {
           <span style={{ color: colors.accent }}>Light</span>
         </motion.div>
 
-        {/* Nav Links */}
         <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
           {['home', 'features', 'news', 'team'].map((item) => (
-            <motion.a 
+            <motion.a
               key={item}
               href={item === 'news' || item === 'team' ? '#' : `#${item === 'home' ? '' : item}`}
               onClick={(e) => handleNavClick(item, e)}
@@ -157,12 +144,11 @@ const handleNavClick = (item, e) => {
           ))}
         </div>
 
-        {/* دکمه زبان - پرچم */}
-        <motion.button 
+        <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={toggleLanguage}
-          style={{ 
+          style={{
             background: 'transparent', border: `1px solid ${colors.border}`,
             cursor: 'pointer', padding: '8px 12px', borderRadius: '10px',
             fontSize: '1.4rem', width: '44px', height: '44px',
@@ -173,7 +159,6 @@ const handleNavClick = (item, e) => {
         </motion.button>
       </motion.nav>
 
-      {/* Team Modal */}
       <TeamModal isOpen={isTeamOpen} onClose={() => setIsTeamOpen(false)} colors={colors} isDarkMode={isDarkMode} />
     </>
   );
