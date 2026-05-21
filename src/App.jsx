@@ -51,12 +51,12 @@ const featuresData = [
     descEn: "Support team always online and ready to help",
   },
   {
-    key: "competitions",
-    icon: "🏆",
-    titleFa: "مسابقات با جوایز",
-    titleEn: "Prize Competitions",
-    descFa: "در مسابقات شرکت کنید و جوایز ببرید",
-    descEn: "Join competitions and win prizes",
+    key: "screenShare",
+    icon: "📡",
+    titleFa: "شیر اسکرین اختصاصی",
+    titleEn: "Private Screen Share",
+    descFa: "اشتراک‌ گذاری صفحه کاملاً خصوصی",
+    descEn: "completely private screen sharing",
   },
   {
     key: "customRoles",
