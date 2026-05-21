@@ -155,17 +155,26 @@ const Navbar = ({ onOpenNewsModal }) => {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
-         {language === 'fa' ? (
-    <svg width="28" height="20" viewBox="0 0 28 20">
+{language === 'fa' ? (
+  <svg width="28" height="20" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
     <rect width="28" height="6.6" fill="#239F40"/>
     <rect y="6.6" width="28" height="6.6" fill="#FFFFFF"/>
     <rect y="13.2" width="28" height="6.6" fill="#DA0000"/>
   </svg>
 ) : (
-  <svg width="28" height="20" viewBox="0 0 28 20">
+  <svg width="28" height="20" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
+    {/* پس‌زمینه آبی */}
     <rect width="28" height="20" fill="#012169"/>
+    {/* صلیب سفید بزرگ */}
+    <rect x="12" width="4" height="20" fill="#FFFFFF"/>
+    <rect y="8" width="28" height="4" fill="#FFFFFF"/>
+    {/* صلیب قرمز باریک */}
+    <rect x="13" width="2" height="20" fill="#C8102E"/>
+    <rect y="9" width="28" height="2" fill="#C8102E"/>
+    {/* خطوط مورب سفید */}
     <line x1="0" y1="0" x2="28" y2="20" stroke="#FFFFFF" strokeWidth="4"/>
     <line x1="28" y1="0" x2="0" y2="20" stroke="#FFFFFF" strokeWidth="4"/>
+    {/* خطوط مورب قرمز */}
     <line x1="0" y1="0" x2="28" y2="20" stroke="#C8102E" strokeWidth="2"/>
     <line x1="28" y1="0" x2="0" y2="20" stroke="#C8102E" strokeWidth="2"/>
   </svg>
