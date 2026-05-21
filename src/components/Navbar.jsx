@@ -101,7 +101,7 @@ const TeamModal = ({ isOpen, onClose, colors, isDarkMode }) => {
     </AnimatePresence>
   );
 };
-
+{
 const handleNavClick = (item, e) => {
     if (item === 'news') {
       e.preventDefault();
